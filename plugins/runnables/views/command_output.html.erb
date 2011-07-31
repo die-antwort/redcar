@@ -14,8 +14,12 @@
       </div>
     </div>
     <form class="actions" action="javascript:return false;">
-      <input type="submit" value="Run again" onclick="Controller.run();"/>
-    </form>    
-</body>
-  
+      <span class="running_action">
+        <input type="submit" value="Stop" onclick="Controller.close();"/>
+      </span>
+      <span class="onfinish_action">
+        <input type="submit" value="Run again" onclick="Controller.run();"/>
+      </span>
+    </form>
+  </body>
 </html>

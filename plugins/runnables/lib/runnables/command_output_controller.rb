@@ -3,7 +3,7 @@ module Redcar
   class Runnables
     class CommandOutputController
       include Redcar::HtmlController
-      
+
       attr_accessor :cmd
 
       def initialize(path, cmd, title)
@@ -12,23 +12,24 @@ module Redcar
         @title = title
         @output_id = 0
       end
-      
+
       def title
         @title
       end
-      
+
       def ask_before_closing
         if @pid
           "This tab contains an unfinished process. \n\nKill the process and close?"
         end
       end
-      
+
       def close
         if @pid
-          Process.kill(9, @pid.to_i + 1)
+          p @pid
+          Process.kill(1, @pid.to_i + 1)
         end
       end
-      
+
       def run
         case Redcar.platform
         when :osx, :linux
@@ -38,7 +39,7 @@ module Redcar
         end
         run_command(cmd)
       end
-      
+
       def copy_output(text)
         Redcar.app.clipboard << text
       end
@@ -50,12 +51,12 @@ module Redcar
           %Q|<link href="#{url}" rel="stylesheet" type="text/css" />|
         end.join("\n")
       end
-      
+
       def process(text)
         @processor ||= OutputProcessor.new
         @processor.process(text)
       end
-      
+
       def output_thread(type, output)
         Thread.new(output) do
           instance_variable_set("@#{type}_thread_started", true)
@@ -70,24 +71,27 @@ module Redcar
           end
         end
       end
-      
+
       def run_command(cmd)
         Thread.new do
           execute <<-JS
-            $('.actions').hide();
+            $('.onfinish_action').hide();
             $('.output').slideUp().prev('.header').addClass('up');
           JS
-          
+
           # TODO: Find browser's onload rather than sleeping
           sleep 1
           start_output_block
           Redcar.log.info "Running: #{cmd}"
-          
+
           # JRuby-specific
           @pid, input, output, error = IO.popen4(cmd)
+          p @pid
           @stdout_thread = output_thread(:stdout, output)
           @stderr_thread = output_thread(:stderr, error)
-          
+          execute <<-JS
+            $('.running_action').show();
+          JS
           Thread.new do
             sleep 0.1 until finished?
             @pid = nil
@@ -95,12 +99,12 @@ module Redcar
           end
         end
       end
-      
+
       def finished?
         @stdout_thread_started && @stderr_thread_started &&
           !@stdout_thread.alive? && !@stderr_thread.alive?
       end
-      
+
       def format_time(time)
         time.strftime("%I:%M:%S %p").downcase
       end
@@ -131,7 +135,8 @@ module Redcar
             return false;
           }).appendTo('#{header_container}');
           $("#{output_container}").parent().removeClass("running");
-          $('.actions').show();
+          $('.running_action').hide();
+          $('.onfinish_action').show();
           $("html, body").attr({ scrollTop: $("body").attr("scrollHeight") });
         JS
       end
@@ -141,7 +146,7 @@ module Redcar
           $("html, body").attr({ scrollTop: $("body").attr("scrollHeight") });
         JS
       end
-      
+
       def append_to(container, html)
         execute(<<-JS)
           $(#{html.inspect}).appendTo("#{container}");
@@ -170,7 +175,7 @@ module Redcar
         Project::Manager.open_file(File.join(Project::Manager.focussed_project.path, file))
         Redcar.app.focussed_window.focussed_notebook_tab.edit_view.document.scroll_to_line(line.to_i)
       end
-      
+
       def index
         rhtml = ERB.new(File.read(File.join(File.dirname(__FILE__), "..", "..", "views", "command_output.html.erb")))
         command = @cmd

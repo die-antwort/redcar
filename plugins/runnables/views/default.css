@@ -16,6 +16,8 @@ h1 {
   padding: 3px 0 2px 20px;
   cursor: pointer;
   background: #ddd url("wedgeDown.png") no-repeat 8px 9px;
+  -moz-border-radius:7px 7px 0 0;
+  border-radius:7px 7px 0 0;
 }
 
 .header.up {
@@ -34,7 +36,11 @@ h1 {
 }
 
 .output {
-  border: 1px solid #ddd;
+  border: 3px solid #ddd;
+  background:black;
+  color:white;
+  -moz-border-radius:0 0 7px 7px;
+  border-radius:0 0 7px 7px;
 }
 
 .process {
@@ -49,7 +55,7 @@ h1 {
   color: #666;
 }
 
-.header .in-progress-message, .running .header .completed-message, .actions {
+.header .in-progress-message, .running .header .completed-message, .onfinish_action, .running_action {
   display: none;
 }
 
