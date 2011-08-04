@@ -25,19 +25,24 @@ module Redcar
 
       def close
         if @pid
+          Redcar.log.info "parent process: #{@pid}"
           begin
-            p "parent process: #{@pid}"
-            pipe = IO.popen("ps -ao pid,ppid | grep #{@pid}")
-            pipe.readlines.each do |line|
-              parts = line.split(/\s+/)
-              if (parts[2] == @pid.to_s && parts[1] != pipe.pid.to_s) then
-                p " -- killing child process: #{parts[1]}"
-                Process.kill(9, parts[1].to_i)
+            case Redcar.platform
+            when :windows
+              IO.popen("taskkill /t /F /pid #{@pid}")
+            when :linux,:osx
+              pipe = IO.popen("ps -ao pid,ppid | grep #{@pid}")
+              pipe.readlines.each do |line|
+                parts = line.split(/\s+/)
+                if (parts[2] == @pid.to_s && parts[1] != pipe.pid.to_s) then
+                  Redcar.log.info " -- killing child process: #{parts[1]}"
+                  Process.kill(9, parts[1].to_i)
+                end
               end
             end
           rescue => e
-            p e
-            e.backtrace.each {|line| p line}
+            Redcar.log.error e
+            Redcar.log.error e.backtrace
           end
         end
       end
@@ -47,7 +52,7 @@ module Redcar
         when :osx, :linux
           cmd = "sh -c \"cd #{@path}; #{@cmd}\""
         when :windows
-          cmd = "cd \"#{@path.gsub('/', '\\')}\" & #{@cmd}"
+          cmd = "cmd /c \"cd \\\"#{@path.gsub('/', '\\')}\\\" & #{@cmd}\""
         end
         run_command(cmd)
       end
@@ -97,13 +102,14 @@ module Redcar
           Redcar.log.info "Running: #{cmd}"
 
           # JRuby-specific
+          p "before popen"
           @pid, input, output, error = IO.popen4(cmd)
           p @pid
-          @stdout_thread = output_thread(:stdout, output)
-          @stderr_thread = output_thread(:stderr, error)
           execute <<-JS
             $('.running_action').show();
           JS
+          @stdout_thread = output_thread(:stdout, output)
+          @stderr_thread = output_thread(:stderr, error)
           Thread.new do
             sleep 0.1 until finished?
             # @pid = nil
