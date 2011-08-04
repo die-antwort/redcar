@@ -43,6 +43,10 @@ h1 {
   border-radius:0 0 7px 7px;
 }
 
+.output :link {
+  color: #cc6633;
+}
+
 .process {
   padding: 0 5px 5px 5px;
 }

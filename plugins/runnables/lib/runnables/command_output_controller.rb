@@ -29,6 +29,7 @@ module Redcar
           begin
             case Redcar.platform
             when :windows
+              Redcar.log.info " -- killing child processes of: #{@pid}"
               IO.popen("taskkill /t /F /pid #{@pid}")
             when :linux,:osx
               pipe = IO.popen("ps -ao pid,ppid | grep #{@pid}")
@@ -102,9 +103,7 @@ module Redcar
           Redcar.log.info "Running: #{cmd}"
 
           # JRuby-specific
-          p "before popen"
           @pid, input, output, error = IO.popen4(cmd)
-          p @pid
           execute <<-JS
             $('.running_action').show();
           JS
