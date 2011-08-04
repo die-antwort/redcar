@@ -25,8 +25,20 @@ module Redcar
 
       def close
         if @pid
-          p @pid
-          Process.kill(1, @pid.to_i + 1)
+          begin
+            p "parent process: #{@pid}"
+            pipe = IO.popen("ps -ao pid,ppid | grep #{@pid}")
+            pipe.readlines.each do |line|
+              parts = line.split(/\s+/)
+              if (parts[2] == @pid.to_s && parts[1] != pipe.pid.to_s) then
+                p " -- killing child process: #{parts[1]}"
+                Process.kill(9, parts[1].to_i)
+              end
+            end
+          rescue => e
+            p e
+            e.backtrace.each {|line| p line}
+          end
         end
       end
 
@@ -94,7 +106,7 @@ module Redcar
           JS
           Thread.new do
             sleep 0.1 until finished?
-            @pid = nil
+            # @pid = nil
             end_output_block
           end
         end
