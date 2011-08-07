@@ -23,7 +23,7 @@ module Redcar
         end
       end
 
-      def close
+      def close(code=9)
         if @pid
           Redcar.log.info "parent process: #{@pid}"
           begin
@@ -37,7 +37,7 @@ module Redcar
                 parts = line.split(/\s+/)
                 if (parts[2] == @pid.to_s && parts[1] != pipe.pid.to_s) then
                   Redcar.log.info " -- killing child process: #{parts[1]}"
-                  Process.kill(9, parts[1].to_i)
+                  Process.kill(code, parts[1].to_i)
                 end
               end
             end
@@ -45,6 +45,24 @@ module Redcar
             Redcar.log.error e
             Redcar.log.error e.backtrace
           end
+        end
+      end
+
+      def kill
+        close(9)
+      end
+
+      def interrupt
+        close(2)
+      end
+
+      def input text
+        if @stdin
+          execute <<-JS
+            $('.input').html('');
+          JS
+          @stdin.puts(text)
+          @stdin.flush
         end
       end
 
@@ -103,15 +121,17 @@ module Redcar
           Redcar.log.info "Running: #{cmd}"
 
           # JRuby-specific
-          @pid, input, output, error = IO.popen4(cmd)
+          @pid, @stdin, output, error = IO.popen4(cmd)
           execute <<-JS
             $('.running_action').show();
+            $('#input_area').focus();
           JS
           @stdout_thread = output_thread(:stdout, output)
           @stderr_thread = output_thread(:stderr, error)
           Thread.new do
             sleep 0.1 until finished?
-            # @pid = nil
+            @pid   = nil
+            @stdin = nil
             end_output_block
           end
         end
@@ -189,8 +209,12 @@ module Redcar
       end
 
       def open_file(file, line)
-        Project::Manager.open_file(File.join(Project::Manager.focussed_project.path, file))
-        Redcar.app.focussed_window.focussed_notebook_tab.edit_view.document.scroll_to_line(line.to_i)
+        project_file = File.join(Project::Manager.focussed_project.path, file)
+        file = project_file if (File.exists?(project_file))
+        if (File.exists?(file))
+          Project::Manager.open_file(file)
+          Redcar.app.focussed_window.focussed_notebook_tab.edit_view.document.scroll_to_line(line.to_i)
+        end
       end
 
       def index
