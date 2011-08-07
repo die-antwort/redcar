@@ -43,7 +43,8 @@ h1 {
 }
 
 .output {
-  border: 3px 3px 0 3px solid #ddd;
+/*border: 3px 3px 0 3px solid #ddd;*/
+  border: 1px solid #666;
   background:black;
   color:white;
   margin-bottom:0;
@@ -102,4 +103,6 @@ input {
   margin-top:0;
   -moz-border-radius:0 0 7px 7px;
   border-radius:0 0 7px 7px;
+  border: 1px solid #666;
+  border-top:none;
 }

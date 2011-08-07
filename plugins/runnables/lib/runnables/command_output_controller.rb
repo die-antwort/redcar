@@ -124,7 +124,7 @@ module Redcar
           @pid, @stdin, output, error = IO.popen4(cmd)
           execute <<-JS
             $('.running_action').show();
-            $('#input_area').focus();
+            $('#input_area').focus().val("");
           JS
           @stdout_thread = output_thread(:stdout, output)
           @stderr_thread = output_thread(:stderr, error)
