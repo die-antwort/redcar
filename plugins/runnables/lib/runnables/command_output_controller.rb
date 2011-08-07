@@ -59,7 +59,7 @@ module Redcar
       def input text
         if @stdin
           execute <<-JS
-            $('.input').html('');
+            $('#input_area').val("");
           JS
           @stdin.puts(text)
           @stdin.flush

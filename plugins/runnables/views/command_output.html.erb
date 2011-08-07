@@ -21,13 +21,13 @@
     </div>
     <form class="actions" action="javascript:return false;">
       <span class="running_action">
-        <input type="text" id="input_area" class="input"/>
+        <input type="text" id="input_area" name="input_area" class="input"/>
         <input type="submit" value="Submit" onclick="Controller.input($('#input_area').val());"/>
         <%= case Redcar.platform
         when :windows
           '<input type="submit" value="Stop" onclick="Controller.close();"/>'
         when :osx,:linux
-          '<input type="submit" value="Stop" onclick="Controller.interrupt();"/><input type="submit" value="Kill" onclick="Controller.kill();"/>'
+          '<input type="submit" value="Stop" onclick="Controller.interrupt();"/> <input type="submit" value="Kill" onclick="Controller.kill();"/>'
         end%>
       </span>
       <span class="onfinish_action">

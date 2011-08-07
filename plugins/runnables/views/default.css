@@ -23,30 +23,39 @@ h1 {
 .header.up {
   background-image: url("wedgeRight.png");
   background-position: 8px 8px;
+  margin-bottom:5px;
 }
 
 .command, .output {
   padding: 5px;
 }
 
+.input {
+  width:80%;
+  border:none;
+  background-color:black;
+  color:white;
+}
+
 .command, .actions {
   margin: 0 5px;
+
 }
 
 .output {
-  border: 3px solid #ddd;
+  border: 3px 3px 0 3px solid #ddd;
   background:black;
   color:white;
-  -moz-border-radius:0 0 7px 7px;
-  border-radius:0 0 7px 7px;
+  margin-bottom:0;
 }
 
-.output :link {
+.output :link, .output :visited {
   color: #cc6633;
 }
 
 .process {
   padding: 0 5px 5px 5px;
+  padding-bottom:0;
 }
 
 .stderr {
@@ -78,4 +87,19 @@ h1 {
 
 .running .output {
   border: 1px solid #666;
+}
+
+input {
+  border:1px solid #999;
+  border-radius:3px;
+  -moz-border-radius:3px;
+}
+
+.actions {
+  background-color:black;
+  color:white;
+  padding:5px;
+  margin-top:0;
+  -moz-border-radius:0 0 7px 7px;
+  border-radius:0 0 7px 7px;
 }
