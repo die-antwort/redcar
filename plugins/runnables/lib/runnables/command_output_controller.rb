@@ -94,9 +94,11 @@ module Redcar
         Thread.new(output) do
           instance_variable_set("@#{type}_thread_started", true)
           begin
-            while line = output.gets
+            while line = output.readpartial(256)
               append_output %Q|<div class="#{type}">#{process(line)}</div>|
             end
+          rescue EOFError
+            nil
           rescue => e
             puts e.class
             puts e.message
