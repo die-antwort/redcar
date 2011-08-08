@@ -34,9 +34,9 @@ module Redcar
             when :linux,:osx
               pipe = IO.popen("ps -ao pid,ppid | grep #{@pid}")
               pipe.readlines.each do |line|
-                parts = line.split(/\s+/)
+                parts = line.lstrip.split(/\s+/)
                 if (parts[1] == @pid.to_s && parts[0] != pipe.pid.to_s) then
-                  Redcar.log.info " -- killing child process: #{parts[1]}"
+                  Redcar.log.info " -- killing child process: #{parts[0]}"
                   Process.kill(code, parts[0].to_i)
                 end
               end
