@@ -19,10 +19,12 @@
         <%= @cmd %>
       </div>
     </div>
-    <form class="actions" action="javascript:$('#input_area').val('');return false;">
+    <form class="actions" action="javascript:return false;">
       <span class="running_action">
         <input type="text" id="input_area" name="input_area" class="input"/>
-        <input type="submit" value="Submit" onclick="Controller.input($('#input_area').val());"/>
+      </span>
+      <span class="running_action" style="float:right">
+        <input type="submit" value="Submit" onclick="var x = $('#input_area').val();$('#input_area').val('');Controller.input(x)"/>
         <%= case Redcar.platform
         when :windows
           '<input type="submit" value="Stop" onclick="Controller.close();"/>'

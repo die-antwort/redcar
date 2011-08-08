@@ -35,9 +35,9 @@ module Redcar
               pipe = IO.popen("ps -ao pid,ppid | grep #{@pid}")
               pipe.readlines.each do |line|
                 parts = line.split(/\s+/)
-                if (parts[2] == @pid.to_s && parts[1] != pipe.pid.to_s) then
+                if (parts[1] == @pid.to_s && parts[0] != pipe.pid.to_s) then
                   Redcar.log.info " -- killing child process: #{parts[1]}"
-                  Process.kill(code, parts[1].to_i)
+                  Process.kill(code, parts[0].to_i)
                 end
               end
             end
@@ -58,9 +58,6 @@ module Redcar
 
       def input text
         if @stdin
-          execute <<-JS
-            $('#input_area').val("");
-          JS
           @stdin.puts(text)
           @stdin.flush
         end
@@ -124,7 +121,7 @@ module Redcar
           @pid, @stdin, output, error = IO.popen4(cmd)
           execute <<-JS
             $('.running_action').show();
-            $('#input_area').focus().val("");
+            $('#input_area').focus();
           JS
           @stdout_thread = output_thread(:stdout, output)
           @stderr_thread = output_thread(:stderr, error)
