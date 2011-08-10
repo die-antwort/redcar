@@ -16,29 +16,47 @@ h1 {
   padding: 3px 0 2px 20px;
   cursor: pointer;
   background: #ddd url("wedgeDown.png") no-repeat 8px 9px;
+  -moz-border-radius:7px 7px 0 0;
+  border-radius:7px 7px 0 0;
 }
 
 .header.up {
   background-image: url("wedgeRight.png");
   background-position: 8px 8px;
+  margin-bottom:5px;
 }
 
 .command, .output {
-  font-family: Menlo, Consolas, monospace;
-  font-size: 12px;
   padding: 5px;
+}
+
+.input {
+  width:60%;
+  border:none;
+  background-color:black;
+  color:white;
 }
 
 .command, .actions {
   margin: 0 5px;
+
 }
 
 .output {
-  border: 1px solid #ddd;
+/*border: 3px 3px 0 3px solid #ddd;*/
+  border: 1px solid #666;
+  background:black;
+  color:white;
+  margin-bottom:0;
+}
+
+.output :link, .output :visited {
+  color: #cc6633;
 }
 
 .process {
   padding: 0 5px 5px 5px;
+  padding-bottom:0;
 }
 
 .stderr {
@@ -49,7 +67,7 @@ h1 {
   color: #666;
 }
 
-.header .in-progress-message, .running .header .completed-message, .actions {
+.header .in-progress-message, .running .header .completed-message, .onfinish_action, .running_action {
   display: none;
 }
 
@@ -70,4 +88,21 @@ h1 {
 
 .running .output {
   border: 1px solid #666;
+}
+
+input {
+  border:1px solid #999;
+  border-radius:3px;
+  -moz-border-radius:3px;
+}
+
+.actions {
+  background-color:black;
+  color:white;
+  padding:5px;
+  margin-top:0;
+  -moz-border-radius:0 0 7px 7px;
+  border-radius:0 0 7px 7px;
+  border: 1px solid #666;
+  border-top:none;
 }

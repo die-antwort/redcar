@@ -16,22 +16,22 @@ module Redcar
           str = str.gsub("\n", "<br>")
         end
       end
-      
+
       def process_file_line_numbers(str)
         file_number_regex = /(\S+)\:(\d+)/
         if str =~ file_number_regex
           str.gsub(file_number_regex,
-            %{<a class="file_line_link" href="javascript:Controller.openFile('#{$1}', '#{$2}');">#{$1}:#{$2}</a>})
+            %{<a class="file_line_link" href="#" onClick="javascript:Controller.openFile('#{$1}', '#{$2}');return false;">#{$1}:#{$2}</a>})
         else
           str
         end
       end
-    
+
       def initialize
         @ansi_stack = []
         @ansi_colors = %w(black red green yellow blue purple cyan gray)
       end
-      
+
       def color(num)
         @ansi_colors[num.to_i]
       end

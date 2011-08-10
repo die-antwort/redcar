@@ -3,6 +3,12 @@
   <head>
     <title><%= @title %></title>
     <%= stylesheet_link_tag :reset, :default, :basic_ansi %>
+    <style>
+      .command, .output, .input {
+        font-family: <%= Redcar::EditView.font %>, Menlo, Consolas, monospace;
+        font-size: <%= (Redcar::EditView.font_size*1.3).to_i%>px;
+      }
+    </style>
   </head>
   <body>
     <%= javascript_controller_actions %>
@@ -14,8 +20,21 @@
       </div>
     </div>
     <form class="actions" action="javascript:return false;">
-      <input type="submit" value="Run again" onclick="Controller.run();"/>
-    </form>    
-</body>
-  
+      <span class="running_action">
+        <input type="text" id="input_area" name="input_area" class="input"/>
+      </span>
+      <span class="running_action" style="float:right">
+        <input type="submit" value="Submit" onclick="var x = $('#input_area').val();$('#input_area').val('');Controller.input(x)"/>
+        <%= case Redcar.platform
+        when :windows
+          '<input type="submit" value="Stop" onclick="Controller.close();"/>'
+        when :osx,:linux
+          '<input type="submit" value="Stop" onclick="Controller.interrupt();"/> <input type="submit" value="Kill" onclick="Controller.kill();"/>'
+        end%>
+      </span>
+      <span class="onfinish_action">
+        <input type="submit" value="Run again" onclick="Controller.run();"/>
+      </span>
+    </form>
+  </body>
 </html>
